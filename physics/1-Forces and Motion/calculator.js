@@ -40,4 +40,40 @@ $(document).ready( function() {
 	var momentum = {"measurement": "Momentum", "quantity": 0, "unit": "kg m/s", "symbol": "p"};
 	var moment = {"measurement": "Moment", "quantity": 0, "unit": "N*m", "symbol": "τ"};
 	
+	$( "#formulaSelect" ).change(function () {
+		var displacement["quantity"] = 0;
+		var velocity["quantity"] = 0;
+		var time["quantity"] = 0;
+		var acceleration["quantity"] = 0;
+		var velocity2["quantity"] = 0;
+		var force["quantity"] = 0;
+		var mass["quantity"] = 0;
+		var gravity["quantity"] = 0;
+		var momentum["quantity"] = 0;
+		var moment["quantity"] = 0;
+		
+		var str = "";
+		
+		$( "select option:selected" ).each(function() {
+		  
+			switch( $(this).value ) {
+				case "displacementvelocitytime":
+				break;
+				case "accelerationchangeinvelocitytime":
+				break;
+				case "forcemassacceleration":
+				break;
+				case "weightmassgravity":
+				break;
+				case "momentummassvelocity":
+				break;
+				case "momentforcepdistance":
+				break;
+			}
+		  
+		});
+   
+		$( "#result" ).text( str );
+	}).change();
+	
 });
