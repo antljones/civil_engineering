@@ -28,6 +28,18 @@ class TriangleMethod {
 	}
 }
 
+function insertMeasurementOptionHtml(measurements) {
+	var str = '<p>Find for:</p><select id="measurementSelect" name="measurements">';
+	
+	for (var i = 0; i < measurements.length; i++ ) { 
+		console.log(measurements[i]);
+		str = str.concat('<option>' + measurements[i]["measurement"] + '(' + measurements[i]["symbol"] + ')' + '</option>');
+	}
+	
+	str = str.concat('</select>');
+	$( "#calc" ).append( str );
+}
+
 $(document).ready( function() {
 	var displacement = {"measurement": "Displacement", "quantity": 0, "unit": "m", "symbol": "s"};
 	var velocity = {"measurement": "Velocity", "quantity": 0, "unit": "m/s", "symbol": "v"};
@@ -39,41 +51,48 @@ $(document).ready( function() {
 	var gravity = {"measurement": "Gravity", "quantity": 0, "unit": "m/s^2", "symbol": "g"}
 	var momentum = {"measurement": "Momentum", "quantity": 0, "unit": "kg m/s", "symbol": "p"};
 	var moment = {"measurement": "Moment", "quantity": 0, "unit": "N*m", "symbol": "τ"};
+	var pdistance = {"measurement": "Perpendicular distance", "quantity": 0, "unit": "m", "symbol": "d"};
+	var weight = {"measurement": "Weight", "quantity": 0, "unit": "Nkg", "symbol": "w"};
 	
 	$( "#formulaSelect" ).change(function () {
-		var displacement["quantity"] = 0;
-		var velocity["quantity"] = 0;
-		var time["quantity"] = 0;
-		var acceleration["quantity"] = 0;
-		var velocity2["quantity"] = 0;
-		var force["quantity"] = 0;
-		var mass["quantity"] = 0;
-		var gravity["quantity"] = 0;
-		var momentum["quantity"] = 0;
-		var moment["quantity"] = 0;
+		$('#calc').empty();
 		
-		var str = "";
+		displacement["quantity"] = 0;
+		velocity["quantity"] = 0;
+		time["quantity"] = 0;
+		acceleration["quantity"] = 0;
+		velocity2["quantity"] = 0;
+		force["quantity"] = 0;
+		mass["quantity"] = 0;
+		gravity["quantity"] = 0;
+		momentum["quantity"] = 0;
+		moment["quantity"] = 0;
 		
 		$( "select option:selected" ).each(function() {
-		  
-			switch( $(this).value ) {
+			
+			switch( $(this).attr('value') ) {
 				case "displacementvelocitytime":
+					insertMeasurementOptionHtml([displacement, velocity, time]);
 				break;
 				case "accelerationchangeinvelocitytime":
+					insertMeasurementOptionHtml([acceleration, velocity, velocity2, time]);
 				break;
 				case "forcemassacceleration":
+					insertMeasurementOptionHtml([force, mass, acceleration]);
 				break;
 				case "weightmassgravity":
+					insertMeasurementOptionHtml([weight,mass,gravity]);
 				break;
 				case "momentummassvelocity":
+					insertMeasurementOptionHtml([momentum,mass,velocity]);
 				break;
 				case "momentforcepdistance":
+					insertMeasurementOptionHtml([moment,force,pdistance]);
 				break;
 			}
-		  
+			
 		});
    
-		$( "#result" ).text( str );
 	}).change();
 	
 });
