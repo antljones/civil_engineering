@@ -28,19 +28,33 @@ class TriangleMethod {
 	}
 }
 
-function insertMeasurementOptionHtml(measurements) {
-	var str = '<p>Find for:</p><select id="measurementSelect" name="measurements">';
+function operatorHandler(operation) {
 	
-	for (var i = 0; i < measurements.length; i++ ) { 
-		console.log(measurements[i]);
-		str = str.concat('<option>' + measurements[i]["measurement"] + '(' + measurements[i]["symbol"] + ')' + '</option>');
+	//TODO: check that the measurement is the same otherwise can't be operated on
+	switch(operator) {
+		case '+':
+		break;
+		case '-':
+		break;
+		case '*':
+		break;
+		case '/':
+		break;
 	}
-	
-	str = str.concat('</select>');
-	$( "#calc" ).append( str );
 }
 
 $(document).ready( function() {
+	function insertMeasurementOptionHtml(measurements) {
+		var str = '<p>Find for:</p><select id="measurementSelect" name="measurements">';
+		
+		for (var i = 0; i < measurements.length; i++ ) { 
+			str = str.concat('<option>' + measurements[i]["measurement"] + '(' + measurements[i]["symbol"] + ')' + '</option>');
+		}
+		
+		str = str.concat('</select>');
+		$( "#calc" ).append( str );
+	}
+
 	var displacement = {"measurement": "Displacement", "quantity": 0, "unit": "m", "symbol": "s"};
 	var velocity = {"measurement": "Velocity", "quantity": 0, "unit": "m/s", "symbol": "v"};
 	var time = {"measurement": "Time", "quantity": 0, "unit": "s", "symbol": "t"};
@@ -53,6 +67,15 @@ $(document).ready( function() {
 	var moment = {"measurement": "Moment", "quantity": 0, "unit": "N*m", "symbol": "τ"};
 	var pdistance = {"measurement": "Perpendicular distance", "quantity": 0, "unit": "m", "symbol": "d"};
 	var weight = {"measurement": "Weight", "quantity": 0, "unit": "Nkg", "symbol": "w"};
+	
+	var displacementForumla = [displacement, velocity, time];
+	var accelerationFormula = [acceleration, velocity, velocity2, time];
+	var forceFormula = [force, mass, acceleration];
+	var weightFormula = [weight,mass,gravity];
+	var momentumFormula = [momentum,mass,velocity];
+	var momentFormula = [moment,force,pdistance];
+	
+	var changeInVelocity = { "measurement1": velocity, "measurement2": velocity2, "operator": "-" };
 	
 	$( "#formulaSelect" ).change(function () {
 		$('#calc').empty();
@@ -72,22 +95,51 @@ $(document).ready( function() {
 			
 			switch( $(this).attr('value') ) {
 				case "displacementvelocitytime":
-					insertMeasurementOptionHtml([displacement, velocity, time]);
+					insertMeasurementOptionHtml(displacementForumla);
 				break;
 				case "accelerationchangeinvelocitytime":
-					insertMeasurementOptionHtml([acceleration, velocity, velocity2, time]);
+					insertMeasurementOptionHtml(accelerationFormula);
 				break;
 				case "forcemassacceleration":
-					insertMeasurementOptionHtml([force, mass, acceleration]);
+					insertMeasurementOptionHtml(forceFormula);
 				break;
 				case "weightmassgravity":
-					insertMeasurementOptionHtml([weight,mass,gravity]);
+					insertMeasurementOptionHtml(weightFormula);
 				break;
 				case "momentummassvelocity":
-					insertMeasurementOptionHtml([momentum,mass,velocity]);
+					insertMeasurementOptionHtml(momentumFormula);
 				break;
 				case "momentforcepdistance":
-					insertMeasurementOptionHtml([moment,force,pdistance]);
+					insertMeasurementOptionHtml(momentFormula);
+				break;
+			}
+			
+		});
+   
+	}).change();
+	
+	$( "#measurementSelect' ).change(function () {
+		
+		$( "select option:selected" ).each(function() {
+			
+			switch( $( "#formulaSelect select option:selected" ).attr('value') ) {
+				case "displacementvelocitytime":
+					insertMeasurementResultsHtml(displacement,velocity,time);
+				break;
+				case "accelerationchangeinvelocitytime":
+					insertMeasurementResultsHtml(acceleration, operatorHandler(changeInVelocity),time);
+				break;
+				case "forcemassacceleration":
+					insertMeasurementResultsHtml(force,mass,acceleration);
+				break;
+				case "weightmassgravity":
+					insertMeasurementResultsHtml(weight,mass,gravity);
+				break;
+				case "momentummassvelocity":
+					insertMeasurementResultsHtml(momentum,mass,velocity);
+				break;
+				case "momentforcepdistance":
+					insertMeasurementResultsHtml(moment,force,pdistance);
 				break;
 			}
 			
