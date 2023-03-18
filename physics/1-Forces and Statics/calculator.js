@@ -12,19 +12,25 @@ class TriangleMethod {
 		this.triangleBottomRight = triangleBottomRight;
 	}
 	
-	get TriangleTopResult() {
+	get triangleTopResult() {
 		this.triangleTop["result"] = this.triangleBottomLeft["quantity"] * this.triangleBottomRight["quantity"];
 		return triangleTop;
 	}
 	
-	get TriangleBottomLeftResult() {
+	get triangleBottomLeftResult() {
 		this.triangleBottomLeft["result"] = this.triangleTop["quantity"] / this.triangleBottomRight["quantity"];
 		return triangleBottomLeft;
 	}
 	
-	get TriangleBottomRightResult() {
+	get triangleBottomRightResult() {
 		this.triangleBottomRight["result"] = this.triangleTop["quantity"] / this.triangleBottomLeft["quantity"];
 		return triangleBottomRight;
+	}
+}
+
+class Measurement {
+	constructor (name, quantity, unit, symbol) {
+
 	}
 }
 
@@ -33,12 +39,16 @@ function operatorHandler(operation) {
 	//TODO: check that the measurement is the same otherwise can't be operated on
 	switch(operator) {
 		case '+':
+			return operation["measurement1"] + operation["measurement2"];
 		break;
 		case '-':
+			return operation["measurement1"] + operation["measurement2"];
 		break;
 		case '*':
+			return operation["measurement1"] * operation["measurement2"];
 		break;
 		case '/':
+			return operation["measurement1"] / operation["measurement2"];
 		break;
 	}
 }
@@ -55,18 +65,18 @@ $(document).ready( function() {
 		$( "#calc" ).append( str );
 	}
 
-	var displacement = {"measurement": "Displacement", "quantity": 0, "unit": "m", "symbol": "s"};
-	var velocity = {"measurement": "Velocity", "quantity": 0, "unit": "m/s", "symbol": "v"};
-	var time = {"measurement": "Time", "quantity": 0, "unit": "s", "symbol": "t"};
-	var acceleration = {"measurement": "Acceleration", "quantity": 0, "unit": "m/s/s", "symbol": "a"};
-	var velocity2 = {"measurement": "Velocity", "quantity": 0, "unit": "m/s", "symbol": "u"};
-	var force = {"measurement": "Force", "quantity": 0, "unit": "kg*m*s^-2", "symbol": "N"};
-	var mass = {"measurement": "Mass", "quantity": 0, "unit": "kg", "symbol": "m"}
-	var gravity = {"measurement": "Gravity", "quantity": 0, "unit": "m/s^2", "symbol": "g"}
-	var momentum = {"measurement": "Momentum", "quantity": 0, "unit": "kg m/s", "symbol": "p"};
-	var moment = {"measurement": "Moment", "quantity": 0, "unit": "N*m", "symbol": "τ"};
-	var pdistance = {"measurement": "Perpendicular distance", "quantity": 0, "unit": "m", "symbol": "d"};
-	var weight = {"measurement": "Weight", "quantity": 0, "unit": "Nkg", "symbol": "w"};
+	var displacement = Measurement.new("Displacement", 0, "m", "s");
+	var velocity = Measurement.new("Velocity", 0, "m/s", "v");
+	var time = Measurement.new("Time", 0, "s", "t");
+	var acceleration = Measurement.new("Acceleration", 0, "m/s/s", "a");
+	var velocity2 = Measurement.new("Velocity",0,"m/s","u");
+	var force = Measurment.new("Force", 0, "N", "symbol": "F");
+	var mass = Measurement.new("Mass", 0, "kg", "m")
+	var gravity = Measurment.new("Gravity", 0, "m/s^2", "g");
+	var momentum = Measurement.new("Momentum", 0, "kg m/s", "p");
+	var moment = Measurement.new("Moment", 0, "N*m", "τ");
+	var pdistance = Measurement.new("Perpendicular distance", 0, "m", "d"};
+	var weight = Measurement.new("Weight", 0, "N", "w"};
 	
 	var displacementForumla = [displacement, velocity, time];
 	var accelerationFormula = [acceleration, velocity, velocity2, time];
@@ -75,7 +85,7 @@ $(document).ready( function() {
 	var momentumFormula = [momentum,mass,velocity];
 	var momentFormula = [moment,force,pdistance];
 	
-	var changeInVelocity = { "measurement1": velocity, "measurement2": velocity2, "operator": "-" };
+	var changeInVelocity = { "measurement1": velocity2, "measurement2": velocity, "operator": "-" };
 	
 	$( "#formulaSelect" ).change(function () {
 		$('#calc').empty();
