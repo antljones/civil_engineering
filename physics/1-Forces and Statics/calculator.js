@@ -37,6 +37,20 @@ class Measurement {
 	}
 }
 
+class Formula {
+	constructor (LHS, RHS) {
+		this.LHS = LHS;
+		this.RHS = RHS;
+	}
+
+	getVariables() {
+		var allVariables = [];
+		allVariables.push(this.LHS);
+		allVariables.push(this.RHS);
+		return allVariables;
+	}
+}
+
 function operatorHandler(operation) {
 	
 	//TODO: check that the measurement is the same otherwise can't be operated on
@@ -58,14 +72,47 @@ function operatorHandler(operation) {
 
 $(document).ready( function() {
 	function insertMeasurementOptionHtml(measurements) {
-		var str = '<p>Find for:</p><select id="measurementSelect" name="measurements">';
+		var str = '<p class="measurementSelection" >Find for:</p><select class="measurementSelection" id="measurementSelect" name="measurements">';
 		
 		for (var i = 0; i < measurements.length; i++ ) { 
-			str = str.concat('<option value="' + measurements[i].name + '">' + measurements[i].name + '(' + measurements[i].symbol + ')' + '</option>');
+			str = str.concat('<option class=-"measurementSelection" value="' + measurements[i].name + '">' + measurements[i].name + '(' + measurements[i].symbol + ')' + '</option>');
 		}
 		
 		str = str.concat('</select>');
-		$( "#calc" ).append( str );
+		$( "#measurementSelectContainer" ).append( str );
+
+		$( "#measurementSelect" ).change(function () {
+
+                	$( "#formulaSelect option:selected" ).each(function() {
+                        	var chosenFormula = null;
+
+                        	switch( $(this).attr('value') ) {
+                                	case "displacementvelocitytime":
+                                        	chosenFormula = displacementFormula;
+                                	break;
+                                	case "accelerationchangeinvelocitytime":
+                                        	chosenFormula = accelerationFormula;
+                                	break;
+                                	case "forcemassacceleration":
+                                        	chosenFormula = forceFormula;
+                                	break;
+                                	case "weightmassgravity":
+                                        	chosenFormula = weightFormula;
+                                	break;
+                                	case "momentummassvelocity":
+                                        	chosenFormula = momentumFormula;
+                                	break;
+                                	case "momentforcepdistance":
+                                        	chosenFormula = momentFormula;
+                                	break;
+                       		}
+
+
+                        	insertMeasurementInputsHTML(chosenFormula, $("#measurementSelect option:selected").attr("value"));
+
+                	});
+
+        	});
 	}
 
 	function insertMeasurementInputsHTML(measurements, selectedMeasurementName) {
@@ -80,14 +127,20 @@ $(document).ready( function() {
 			}
 		}
 
-                var str = '<p>Input values for:';
+                var str = '<p class="measurementInput">Input values for:';
 
 		for (var i = 0; i < chosenMeasurements.length; i++) {
-			str = str.concat('<input type="text" id="' + chosenMeasurements[i].name + '"></input>');
+			str = str.concat('<input type="text" class="measurementInput"  id="' + chosenMeasurements[i].name + '" placeholder="' + chosenMeasurements[i].name + '(' + chosenMeasurements[i].symbol + ')' + '"></input>');
 		}
 
-		str = str.concat('</p>');
-		$( "#calc" ).append( str);
+		str = str.concat('<input type="button" id="submitBtn"></input></p>');
+		
+		$( "#measurementInputContainer" ).empty();
+		$( "#measurementInputContainer" ).append( str);
+
+		$('#submitBtn').click(function () {
+					
+		});
 	}
 
 	var displacement = new Measurement("Displacement", 0, "m", "s");
@@ -103,18 +156,18 @@ $(document).ready( function() {
 	var pdistance = new Measurement("Perpendicular distance", 0, "m", "d");
 	var weight = new Measurement("Weight", 0, "N", "w");
 	
-	var displacementFormula = [displacement, velocity, time];
-	var accelerationFormula = [acceleration, velocity, velocity2, time];
-	var forceFormula = [force, mass, acceleration];
-	var weightFormula = [weight,mass,gravity];
-	var momentumFormula = [momentum,mass,velocity];
-	var momentFormula = [moment,force,pdistance];
+	var displacementFormula = new Formula(displacement, [velocity, time]);
+	var accelerationFormula = new Formula(acceleration, [velocity,velocity2, time]);
+	var forceFormula = new Formula(force, [mass, acceleration]);
+	var weightFormula = new Formula(weight,[mass,gravity]);
+	var momentumFormula = new Formula(momentum,[mass,velocity]);
+	var momentFormula = new Formula(moment,[force,pdistance]);
 	
 	var changeInVelocity = { "measurement1": velocity2, "measurement2": velocity, "operator": "-" };
-	
+
 	$( "#formulaSelect" ).change(function () {
-		$('#calc').empty();
-		
+		$('#measurementSelectContainer').empty();
+
 		displacement["quantity"] = 0;
 		velocity["quantity"] = 0;
 		time["quantity"] = 0;
@@ -127,63 +180,33 @@ $(document).ready( function() {
 		moment["quantity"] = 0;
 		
 		$( "select option:selected" ).each(function() {
-
+			
                         switch( $(this).attr("value") ) {
                                 case "displacementvelocitytime":
-                                        insertMeasurementOptionHtml(displacementFormula);
+                                        insertMeasurementOptionHtml(displacementFormula.getVariables());
                                 break;
                                 case "accelerationchangeinvelocitytime":
-                                        insertMeasurementOptionHtml(accelerationFormula);
+                                        insertMeasurementOptionHtml(accelerationFormula.getVariables());
                                 break;
                                 case "forcemassacceleration":
-                                        insertMeasurementOptionHtml(forceFormula);
+                                        insertMeasurementOptionHtml(forceFormula.getVariables());
                                 break;
                                 case "weightmassgravity":
-                                        insertMeasurementOptionHtml(weightFormula);
+                                        insertMeasurementOptionHtml(weightFormula.getVariables());
                                 break;
                                 case "momentummassvelocity":
-                                        insertMeasurementOptionHtml(momentumFormula);
+                                        insertMeasurementOptionHtml(momentumFormula.getVariables());
                                 break;
                                 case "momentforcepdistance":
-                                        insertMeasurementOptionHtml(momentFormula);
+                                        insertMeasurementOptionHtml(momentFormula.getVariables());
                                 break;
                         }
+			
+			$('#measurementSelect').trigger("change");
 
 		});
-   
-	}).change();
-	
-	$( "#measurementSelect" ).change(function () {
-		
-		$( "#formulaSelect option:selected" ).each(function() {
-			var chosenFormula = null;
 
-                        switch( $(this).attr('value') ) {
-                                case "displacementvelocitytime":
-                                        chosenFormula = displacementFormula;
-                                break;
-                                case "accelerationchangeinvelocitytime":
-                                        chosenFormula = accelerationFormula;
-                                break;
-                                case "forcemassacceleration":
-                                        chosenFormula = forceFormula;
-                                break;
-                                case "weightmassgravity":
-                                        chosenFormula = weightFormula;
-                                break;
-                                case "momentummassvelocity":
-                                        chosenFormula = momentumFormula;
-                                break;
-                                case "momentforcepdistance":
-                                        chosenFormula = momentFormula;
-                                break;
-                        }
+	});
 
-
-                        insertMeasurementInputsHTML(chosenFormula, $("#measurementSelect option:selected").attr("value"));
-
-		});
-   
-	}).change();
-	
+	$("#formulaSelect").trigger("change");
 });
